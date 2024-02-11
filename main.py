@@ -1,7 +1,9 @@
+import json
 import os
 import tkinter as tk
 import webbrowser
 from functools import partial
+from pathlib import Path
 
 import keyboard
 import pyautogui
@@ -9,14 +11,27 @@ import pyperclip
 import requests
 from bs4 import BeautifulSoup
 
+
 # TODO: - Handle errors and show it in popup
 #       - Write readme
+#       - Mb make main window with settings?
 
-# TODO: move to settings.json:
-RUN_SHORTCUT = 'ctrl+`'
-QUIT_SHORTCUT = 'ctrl+q'
-# PATH_TO_DICT_FILE = 'C:\\Users\\bameo\\iCloudDrive\\iCloud~md~obsidian\\mango-obsidian-vault\\English\\vocabulary.md'
-DICT_FILE_PATH = 'D:\\tmp\\2\\vocabulary.md'
+
+def get_absolute_path(exec_file, relative_path):
+    exec_path = Path(exec_file).parent.absolute()
+    return (exec_path / relative_path).resolve()
+
+
+SETTINGS_PATH = get_absolute_path(__file__, 'settings.json')
+
+file = open(SETTINGS_PATH, 'r')
+SETTINGS = json.load(file)
+file.close()
+
+DICT_FILE_PATH = SETTINGS['VocabularyFilePath']
+RUN_SHORTCUT = SETTINGS['Shortcut']
+# QUIT_SHORTCUT = 'ctrl+q'
+
 
 if not os.path.exists(DICT_FILE_PATH):
     print(f'File \'{DICT_FILE_PATH}\' does not exist, creating new file.')
